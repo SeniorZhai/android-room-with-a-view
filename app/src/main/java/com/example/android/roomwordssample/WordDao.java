@@ -32,22 +32,20 @@ import java.util.List;
  * https://developer.android.com/topic/libraries/architecture/room.html#type-converters
  */
 
-@Dao
-public interface WordDao {
+@Dao public interface WordDao {
 
-    // LiveData is a data holder class that can be observed within a given lifecycle.
-    // Always holds/caches latest version of data. Notifies its active observers when the
-    // data has changed. Since we are getting all the contents of the database,
-    // we are notified whenever any of the database contents have changed.
-    @Query("SELECT * from word_table ORDER BY word ASC")
-    LiveData<List<Word>> getAlphabetizedWords();
+  // LiveData is a data holder class that can be observed within a given lifecycle.
+  // Always holds/caches latest version of data. Notifies its active observers when the
+  // data has changed. Since we are getting all the contents of the database,
+  // we are notified whenever any of the database contents have changed.
+  @Query("SELECT * from word_table ORDER BY word DESC") LiveData<List<Word>> getAlphabetizedWords();
 
-    // We do not need a conflict strategy, because the word is our primary key, and you cannot
-    // add two items with the same primary key to the database. If the table has more than one
-    // column, you can use @Insert(onConflict = OnConflictStrategy.REPLACE) to update a row.
-    @Insert
-    void insert(Word word);
+  // We do not need a conflict strategy, because the word is our primary key, and you cannot
+  // add two items with the same primary key to the database. If the table has more than one
+  // column, you can use @Insert(onConflict = OnConflictStrategy.REPLACE) to update a row.
+  @Insert void insert(Word word);
 
-    @Query("DELETE FROM word_table")
-    void deleteAll();
+  @Query("DELETE FROM word_table") void deleteAll();
+
+  @Query("UPDATE word_table SET word = :s WHERE word = :i") void update(int i, String s);
 }

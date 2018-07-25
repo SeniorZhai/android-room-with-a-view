@@ -19,7 +19,7 @@ package com.example.android.roomwordssample;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
-
+import android.util.Log;
 import java.util.List;
 
 /**
@@ -29,44 +29,67 @@ import java.util.List;
 
 public class WordRepository {
 
-    private WordDao mWordDao;
-    private LiveData<List<Word>> mAllWords;
+  private WordDao mWordDao;
+  private LiveData<List<Word>> mAllWords;
 
-    // Note that in order to unit test the WordRepository, you have to remove the Application
-    // dependency. This adds complexity and much more code, and this sample is not about testing.
-    // See the BasicSample in the android-architecture-components repository at
-    // https://github.com/googlesamples
-    WordRepository(Application application) {
-        WordRoomDatabase db = WordRoomDatabase.getDatabase(application);
-        mWordDao = db.wordDao();
-        mAllWords = mWordDao.getAlphabetizedWords();
-    }
+  // Note that in order to unit test the WordRepository, you have to remove the Application
+  // dependency. This adds complexity and much more code, and this sample is not about testing.
+  // See the BasicSample in the android-architecture-components repository at
+  // https://github.com/googlesamples
+  WordRepository(Application application) {
+    WordRoomDatabase db = WordRoomDatabase.getDatabase(application);
+    mWordDao = db.wordDao();
+    mAllWords = mWordDao.getAlphabetizedWords();
+  }
 
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    LiveData<List<Word>> getAllWords() {
-        return mAllWords;
-    }
+  // Room executes all queries on a separate thread.
+  // Observed LiveData will notify the observer when the data has changed.
+  LiveData<List<Word>> getAllWords() {
+    return mAllWords;
+  }
 
-    // You must call this on a non-UI thread or your app will crash.
-    // Like this, Room ensures that you're not doing any long running operations on the main
-    // thread, blocking the UI.
-    public void insert (Word word) {
-        new insertAsyncTask(mWordDao).execute(word);
-    }
-
-    private static class insertAsyncTask extends AsyncTask<Word, Void, Void> {
-
-        private WordDao mAsyncTaskDao;
-
-        insertAsyncTask(WordDao dao) {
-            mAsyncTaskDao = dao;
+  // You must call this on a non-UI thread or your app will crash.
+  // Like this, Room ensures that you're not doing any long running operations on the main
+  // thread, blocking the UI.
+  public void insert() {
+    new Thread(new Runnable() {
+      @Override public void run() {
+        Log.d("Main", "insert begin" + System.currentTimeMillis());
+        for (int i = 0; i < 20000; i++) {
+          mWordDao.insert(new Word("" + i));
         }
+        Log.d("Main", "insert end" + System.currentTimeMillis());
+      }
+    }).start();
+  }
 
-        @Override
-        protected Void doInBackground(final Word... params) {
-            mAsyncTaskDao.insert(params[0]);
-            return null;
+  public void update() {
+    new Thread(new Runnable() {
+      @Override public void run() {
+        Log.d("Main", "update begin" + System.currentTimeMillis());
+        for (int i = 0; i < 20000; i++) {
+          mWordDao.update(i, i + "s");
         }
+        Log.d("Main", "update end" + System.currentTimeMillis());
+      }
+    }).start();
+  }
+
+  public void clear() {
+    new deleteAsyncTask(mWordDao).execute();
+  }
+
+  private static class deleteAsyncTask extends AsyncTask<Word, Void, Void> {
+
+    private WordDao mAsyncTaskDao;
+
+    deleteAsyncTask(WordDao dao) {
+      mAsyncTaskDao = dao;
     }
+
+    @Override protected Void doInBackground(final Word... params) {
+      mAsyncTaskDao.deleteAll();
+      return null;
+    }
+  }
 }
