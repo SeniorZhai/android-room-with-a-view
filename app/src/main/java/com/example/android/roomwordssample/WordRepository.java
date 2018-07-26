@@ -31,6 +31,7 @@ public class WordRepository {
 
   private WordDao mWordDao;
   private LiveData<List<Word>> mAllWords;
+  private static int count = 20000;
 
   // Note that in order to unit test the WordRepository, you have to remove the Application
   // dependency. This adds complexity and much more code, and this sample is not about testing.
@@ -39,7 +40,7 @@ public class WordRepository {
   WordRepository(Application application) {
     WordRoomDatabase db = WordRoomDatabase.getDatabase(application);
     mWordDao = db.wordDao();
-    mAllWords = mWordDao.getAlphabetizedWords();
+    mAllWords = db.wordDao().getAlphabetizedWords();
   }
 
   // Room executes all queries on a separate thread.
@@ -55,7 +56,7 @@ public class WordRepository {
     new Thread(new Runnable() {
       @Override public void run() {
         Log.d("Main", "insert begin" + System.currentTimeMillis());
-        for (int i = 0; i < 20000; i++) {
+        for (int i = 0; i < count; i++) {
           mWordDao.insert(new Word("" + i));
         }
         Log.d("Main", "insert end" + System.currentTimeMillis());
@@ -64,22 +65,14 @@ public class WordRepository {
   }
 
   public void update() {
-    new Thread(new Runnable() {
-      @Override public void run() {
-        Log.d("Main", "update begin" + System.currentTimeMillis());
-        for (int i = 0; i < 20000; i++) {
-          mWordDao.update(i, i + "s");
-        }
-        Log.d("Main", "update end" + System.currentTimeMillis());
-      }
-    }).start();
+    new updateAsyncTask(mWordDao).execute();
   }
 
   public void clear() {
     new deleteAsyncTask(mWordDao).execute();
   }
 
-  private static class deleteAsyncTask extends AsyncTask<Word, Void, Void> {
+  private static class deleteAsyncTask extends android.os.AsyncTask<Word, Void, Void> {
 
     private WordDao mAsyncTaskDao;
 
@@ -89,6 +82,24 @@ public class WordRepository {
 
     @Override protected Void doInBackground(final Word... params) {
       mAsyncTaskDao.deleteAll();
+      return null;
+    }
+  }
+
+  private static class updateAsyncTask extends AsyncTask<Word, Void, Void> {
+
+    private WordDao mAsyncTaskDao;
+
+    updateAsyncTask(WordDao dao) {
+      mAsyncTaskDao = dao;
+    }
+
+    @Override protected Void doInBackground(final Word... params) {
+      Log.d("Main", "update begin" + System.currentTimeMillis());
+      for (int i = 0; i < count; i++) {
+        mAsyncTaskDao.update(i, i + "s");
+      }
+      Log.d("Main", "update end" + System.currentTimeMillis());
       return null;
     }
   }
