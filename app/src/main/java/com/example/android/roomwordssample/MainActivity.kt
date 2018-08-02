@@ -19,12 +19,11 @@ package com.example.android.roomwordssample
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
+import kotlinx.android.synthetic.main.activity_main.fab1
+import kotlinx.android.synthetic.main.content_main.recyclerview
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,26 +37,27 @@ class MainActivity : AppCompatActivity() {
     val toolbar = findViewById<Toolbar>(R.id.toolbar)
     setSupportActionBar(toolbar)
 
-    val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
-    val adapter = WordListAdapter(this)
-    recyclerView.adapter = adapter
-    recyclerView.layoutManager = LinearLayoutManager(this)
+    val adapter = WordListAdapter()
+    recyclerview.adapter = adapter
+    recyclerview.layoutManager = LinearLayoutManager(this)
 
     mWordViewModel = ViewModelProviders.of(this).get(WordViewModel::class.java)
-
-    mWordViewModel!!.allWords.observe(this, Observer { words ->
-      Log.d("Main", "get " + words?.size + "\t" + System.currentTimeMillis())
-      adapter.setWords(words)
+    mWordViewModel!!.messages.observe(this, Observer { words ->
+      adapter.submitList(words)
+      recyclerview.postDelayed({
+        (recyclerview.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(0, 0)
+      }, 30)
     })
 
-    val fab = findViewById<FloatingActionButton>(R.id.fab)
-    fab.setOnClickListener {
+
+    fab1.setOnClickListener {
       Thread {
-        mWordViewModel!!.update()
+        mWordViewModel!!.insert(System.currentTimeMillis().toString())
       }.start()
     }
     th.start()
   }
+
 
   val th by lazy {
     Thread {

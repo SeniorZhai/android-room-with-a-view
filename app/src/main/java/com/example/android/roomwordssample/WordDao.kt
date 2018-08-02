@@ -1,4 +1,4 @@
-package com.example.android.roomwordssample;
+package com.example.android.roomwordssample
 
 /*
  * Copyright (C) 2017 Google Inc.
@@ -16,12 +16,10 @@ package com.example.android.roomwordssample;
  * limitations under the License.
  */
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
-
-import java.util.List;
+import android.arch.paging.DataSource
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.Query
 
 /**
  * The Room Magic is in this file, where you map a Java method call to an SQL query.
@@ -32,20 +30,25 @@ import java.util.List;
  * https://developer.android.com/topic/libraries/architecture/room.html#type-converters
  */
 
-@Dao public interface WordDao {
+@Dao
+interface WordDao {
 
   // LiveData is a data holder class that can be observed within a given lifecycle.
   // Always holds/caches latest version of data. Notifies its active observers when the
   // data has changed. Since we are getting all the contents of the database,
   // we are notified whenever any of the database contents have changed.
-  @Query("SELECT * from word_table ORDER BY word DESC") LiveData<List<Word>> getAlphabetizedWords();
+  @Query("SELECT * from word_table ORDER BY word DESC")
+  fun getData(): DataSource.Factory<Int, Word>
 
   // We do not need a conflict strategy, because the word is our primary key, and you cannot
   // add two items with the same primary key to the database. If the table has more than one
   // column, you can use @Insert(onConflict = OnConflictStrategy.REPLACE) to update a row.
-  @Insert void insert(Word word);
+  @Insert
+  fun insert(word: Word)
 
-  @Query("DELETE FROM word_table") void deleteAll();
+  @Query("DELETE FROM word_table")
+  fun deleteAll()
 
-  @Query("UPDATE word_table SET word = :s WHERE word = :i") void update(int i, String s);
+  @Query("UPDATE word_table SET word = :s WHERE word = :i")
+  fun update(i: String, s: String)
 }

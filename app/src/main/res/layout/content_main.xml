@@ -25,13 +25,16 @@ limitations under the License. -->
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.android.roomwordssample.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    >
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/darker_gray"
-        tools:listitem="@layout/recyclerview_item" />
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/recyclerview"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@android:color/darker_gray"
+      app:stackFromEnd="true"
+      tools:listitem="@layout/recyclerview_item"
+      />
 
 </android.support.constraint.ConstraintLayout>
