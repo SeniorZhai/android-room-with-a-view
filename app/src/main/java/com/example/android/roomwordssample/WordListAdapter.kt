@@ -16,6 +16,7 @@ package com.example.android.roomwordssample
  * limitations under the License.
  */
 
+import android.arch.paging.PagedList
 import android.arch.paging.PagedListAdapter
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -28,26 +29,44 @@ import com.example.android.roomwordssample.WordListAdapter.WordViewHolder
 
 class WordListAdapter : PagedListAdapter<Word, WordViewHolder>(diffCallback) {
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
-    Log.d("---","onCreateViewHolder")
+    Log.d("---", "onCreateViewHolder")
     val itemView = View.inflate(parent.context, R.layout.recyclerview_item, null)
     return WordViewHolder(itemView)
   }
 
   override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
-    Log.d("---","onBindViewHolder")
+    Log.d("---", "onBindViewHolder")
     getItem(position)?.let {
       holder.wordItemView.text = it.word
     }
   }
 
+  override fun submitList(pagedList: PagedList<Word>?) {
+    super.submitList(pagedList)
+    Log.w("---", "submitList " + pagedList?.size)
+  }
+
+  override fun onCurrentListChanged(currentList: PagedList<Word>?) {
+    super.onCurrentListChanged(currentList)
+    Log.w("---", "onCurrentListChanged " + currentList?.size)
+  }
+
   companion object {
     private val diffCallback = object : DiffUtil.ItemCallback<Word>() {
       override fun areItemsTheSame(oldItem: Word, newItem: Word): Boolean {
-        return oldItem.word == newItem.word
+        return (oldItem.word == newItem.word).apply {
+          if (this) {
+            Log.d("---", "areItemsTheSame ${oldItem.word}")
+          }
+        }
       }
 
       override fun areContentsTheSame(oldItem: Word, newItem: Word): Boolean {
-        return oldItem.word == newItem.word
+        return (oldItem.word == newItem.word).apply {
+          if (!this) {
+            Log.d("---", "areContentsTheSame ${oldItem.word}")
+          }
+        }
       }
     }
   }

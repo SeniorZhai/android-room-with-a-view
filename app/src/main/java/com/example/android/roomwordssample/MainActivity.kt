@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
+import kotlinx.android.synthetic.main.activity_main.fab
 import kotlinx.android.synthetic.main.activity_main.fab1
 import kotlinx.android.synthetic.main.content_main.recyclerview
 
@@ -39,32 +40,38 @@ class MainActivity : AppCompatActivity() {
 
     val adapter = WordListAdapter()
     recyclerview.adapter = adapter
-    recyclerview.layoutManager = LinearLayoutManager(this)
+    recyclerview.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
 
     mWordViewModel = ViewModelProviders.of(this).get(WordViewModel::class.java)
     mWordViewModel!!.messages.observe(this, Observer { words ->
       adapter.submitList(words)
       recyclerview.postDelayed({
-        (recyclerview.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(0, 0)
+        (recyclerview.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+            0, 0)
       }, 30)
     })
 
+
+    fab.setOnClickListener {
+      Thread {
+        mWordViewModel!!.insert(2000000)
+      }.start()
+    }
 
     fab1.setOnClickListener {
       Thread {
         mWordViewModel!!.insert(System.currentTimeMillis().toString())
       }.start()
     }
-    th.start()
   }
 
 
-  val th by lazy {
-    Thread {
-      mWordViewModel!!.clear()
-      mWordViewModel!!.insert()
-    }
-  }
+//  val th by lazy {
+//    Thread {
+//      mWordViewModel!!.clear()
+//      mWordViewModel!!.insert()
+//    }
+//  }
 
   companion object {
     val NEW_WORD_ACTIVITY_REQUEST_CODE = 1

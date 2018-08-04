@@ -33,7 +33,7 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
 
   val messages: LiveData<PagedList<Word>>
     get() = LivePagedListBuilder(mRepository.data,
-        PagedList.Config.Builder().setPageSize(60).setEnablePlaceholders(true).build()).build()
+        PagedList.Config.Builder().setPageSize(20).setEnablePlaceholders(true).build()).build()
 
   fun insert(str: String) {
     mRepository.insert(str)
@@ -41,6 +41,10 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
 
   fun insert() {
     mRepository.insert()
+  }
+
+  fun insert(cou: Int) {
+    mRepository.insert(cou)
   }
 
   fun clear() {

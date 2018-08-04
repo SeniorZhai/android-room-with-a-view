@@ -50,6 +50,22 @@ class WordRepository constructor(application: Application) {
     }).start()
   }
 
+  fun insert(int: Int) {
+    Thread(Runnable {
+      Log.d("Main", "insert begin" + System.currentTimeMillis())
+      try {
+        for (i in 0 until int) {
+          mWordDao.insert(Word(System.currentTimeMillis().toString() + ""))
+          Log.d("Main", "insert $i")
+        }
+      } catch (e: Exception) {
+        insert(int)
+        Log.e("---", e.message)
+      }
+      Log.d("Main", "insert end" + System.currentTimeMillis())
+    }).start()
+  }
+
   fun insert(str: String) {
     mWordDao.insert(Word(str))
   }
@@ -72,6 +88,6 @@ class WordRepository constructor(application: Application) {
   }
 
   companion object {
-    private val count = 20
+    private val count = 200
   }
 }
