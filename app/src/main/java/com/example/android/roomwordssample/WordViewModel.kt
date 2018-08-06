@@ -40,11 +40,11 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
   }
 
   fun insert() {
-    mRepository.insert()
+    mRepository.batchInsert()
   }
 
-  fun insert(cou: Int) {
-    mRepository.insert(cou)
+  fun batchInsert(count: Int) {
+    mRepository.batchInsert(count)
   }
 
   fun clear() {

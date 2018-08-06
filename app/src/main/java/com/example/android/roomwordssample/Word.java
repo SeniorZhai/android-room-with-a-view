@@ -32,16 +32,35 @@ import android.support.annotation.NonNull;
  * https://developer.android.com/topic/libraries/architecture/room.html
  */
 
-@Entity(tableName = "word_table")
-public class Word {
+@Entity(tableName = "word_table") public class Word {
 
-    @PrimaryKey
-    @NonNull
-    @ColumnInfo(name = "word")
-    private String mWord;
+  @PrimaryKey @NonNull @ColumnInfo(name = "word") public String mWord;
+  @ColumnInfo(name = "column1") public String column1 = "column1";
+  @ColumnInfo(name = "column2") public String column2 = "column2";
+  @ColumnInfo(name = "column3") public String column3 = "column3";
+  @ColumnInfo(name = "column4") public String column4 = "column4";
+  @ColumnInfo(name = "column5") public String column5 = "column5";
+  @ColumnInfo(name = "column6") public String column6 = "column6";
+  @ColumnInfo(name = "column7") public String column7 = "column7";
+  @ColumnInfo(name = "column8") public String column8 = "column8";
+  @ColumnInfo(name = "column9") public String column9 = "column9";
+  @ColumnInfo(name = "column10") public String column10 = "column10";
+  @ColumnInfo(name = "column11") public String column11 = "column11";
+  @ColumnInfo(name = "column12") public String column12 = "column12";
+  @ColumnInfo(name = "column13") public String column13 = "column13";
+  @ColumnInfo(name = "column14") public String column14 = "column14";
+  @ColumnInfo(name = "column15") public String column15 = "column15";
+  @ColumnInfo(name = "column16") public String column16 = "column16";
+  @ColumnInfo(name = "column17") public String column17 = "column17";
+  @ColumnInfo(name = "column18") public String column18 = "column18";
+  @ColumnInfo(name = "column19") public String column19 = "column19";
+  @ColumnInfo(name = "column20") public String column20 = "column20";
 
-    public Word(@NonNull String word) {
-        this.mWord = word;}
+  public Word(@NonNull String word) {
+    this.mWord = word;
+  }
 
-    public String getWord(){return this.mWord;}
+  public String getWord() {
+    return this.mWord;
+  }
 }

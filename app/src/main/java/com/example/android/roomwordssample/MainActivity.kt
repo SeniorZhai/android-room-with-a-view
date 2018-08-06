@@ -21,9 +21,12 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView.AdapterDataObserver
 import android.support.v7.widget.Toolbar
-import kotlinx.android.synthetic.main.activity_main.fab
-import kotlinx.android.synthetic.main.activity_main.fab1
+import android.util.Log
+import android.view.View
+import kotlinx.android.synthetic.main.content_main.count_tv
+import kotlinx.android.synthetic.main.content_main.insert
 import kotlinx.android.synthetic.main.content_main.recyclerview
 
 
@@ -42,38 +45,30 @@ class MainActivity : AppCompatActivity() {
     recyclerview.adapter = adapter
     recyclerview.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
 
+    adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
+      override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+        recyclerview.layoutManager?.scrollToPosition(0)
+      }
+    })
     mWordViewModel = ViewModelProviders.of(this).get(WordViewModel::class.java)
+
     mWordViewModel!!.messages.observe(this, Observer { words ->
+      Log.d("---", "getMessages")
+      count_tv.text = "count:${words?.size}"
       adapter.submitList(words)
-      recyclerview.postDelayed({
-        (recyclerview.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-            0, 0)
-      }, 30)
     })
 
 
-    fab.setOnClickListener {
+    insert.setOnClickListener {
       Thread {
-        mWordViewModel!!.insert(2000000)
+        runOnUiThread {
+          insert.visibility = View.GONE
+        }
+        mWordViewModel!!.batchInsert(300)
+        runOnUiThread {
+          insert.visibility = View.VISIBLE
+        }
       }.start()
     }
-
-    fab1.setOnClickListener {
-      Thread {
-        mWordViewModel!!.insert(System.currentTimeMillis().toString())
-      }.start()
-    }
-  }
-
-
-//  val th by lazy {
-//    Thread {
-//      mWordViewModel!!.clear()
-//      mWordViewModel!!.insert()
-//    }
-//  }
-
-  companion object {
-    val NEW_WORD_ACTIVITY_REQUEST_CODE = 1
   }
 }

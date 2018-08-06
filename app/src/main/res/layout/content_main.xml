@@ -33,8 +33,33 @@ limitations under the License. -->
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@android:color/darker_gray"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
       app:stackFromEnd="true"
       tools:listitem="@layout/recyclerview_item"
       />
 
+
+  <Button
+      android:id="@+id/insert"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|start"
+      android:text="insert 300"
+      android:visibility="visible"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      />
+
+  <TextView
+      android:id="@+id/count_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="please click init"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      />
 </android.support.constraint.ConstraintLayout>

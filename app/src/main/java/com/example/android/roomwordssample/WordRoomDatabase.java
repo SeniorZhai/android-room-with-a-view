@@ -62,10 +62,12 @@ public abstract class WordRoomDatabase extends RoomDatabase {
         @Override
         public void onOpen (@NonNull SupportSQLiteDatabase db){
             super.onOpen(db);
-            // If you want to keep the data through app restarts,
-            // comment out the following line.
-            new PopulateDbAsync(INSTANCE).execute();
         }
+
+      @Override public void onCreate(@NonNull SupportSQLiteDatabase db) {
+        super.onCreate(db);
+        new PopulateDbAsync(INSTANCE).execute();
+      }
     };
 
     /**
@@ -82,6 +84,9 @@ public abstract class WordRoomDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(final Void... params) {
+            for(int i =0 ; i<2000; i++){
+              mDao.insert(new Word(String.valueOf(System.currentTimeMillis())));
+            }
             return null;
         }
     }

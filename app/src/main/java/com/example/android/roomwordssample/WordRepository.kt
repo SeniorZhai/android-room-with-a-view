@@ -40,34 +40,29 @@ class WordRepository constructor(application: Application) {
   // You must call this on a non-UI thread or your app will crash.
   // Like this, Room ensures that you're not doing any long running operations on the main
   // thread, blocking the UI.
-  fun insert() {
-    Thread(Runnable {
-      Log.d("Main", "insert begin" + System.currentTimeMillis())
-      for (i in 0 until count) {
-        mWordDao.insert(Word(System.currentTimeMillis().toString() + ""))
-      }
-      Log.d("Main", "insert end" + System.currentTimeMillis())
-    }).start()
+  fun batchInsert() {
+    Log.d("---", "batchInsert begin" + System.currentTimeMillis())
+    for (i in 0 until count) {
+      mWordDao.insert(Word(System.currentTimeMillis().toString() + ""))
+    }
+    Log.d("---", "batchInsert end" + System.currentTimeMillis())
   }
 
-  fun insert(int: Int) {
-    Thread(Runnable {
-      Log.d("Main", "insert begin" + System.currentTimeMillis())
-      try {
-        for (i in 0 until int) {
-          mWordDao.insert(Word(System.currentTimeMillis().toString() + ""))
-          Log.d("Main", "insert $i")
-        }
-      } catch (e: Exception) {
-        insert(int)
-        Log.e("---", e.message)
-      }
-      Log.d("Main", "insert end" + System.currentTimeMillis())
-    }).start()
+  fun batchInsert(count: Int) {
+    Log.d("---", "batchInsert begin" + System.currentTimeMillis())
+    innerInsert(count)
+    Log.d("---", "batchInsert end" + System.currentTimeMillis())
   }
 
   fun insert(str: String) {
     mWordDao.insert(Word(str))
+  }
+
+  private fun innerInsert(count: Int) {
+    for (i in 0 until count) {
+      mWordDao.insert(Word(System.currentTimeMillis().toString() + ""))
+      Log.d("insert", "batchInsert $i")
+    }
   }
 
   fun update(srouce: String, update: String) {
